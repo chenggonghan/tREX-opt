@@ -1,0 +1,65 @@
+---
+title: "tREX-opt: A Random Effect Optimization Method for Recapitulation of Single Cell Chromatin 3D Structure"
+author: "Chenggong Han and Shili Lin"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tREX-opt: A Random Effect Optimization Method for Recapitulation of Single Cell Chromatin 3D Structure}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## 1 Introduction 
+
+tREX (Park, J. and Lin, S. (2016)) is a model-based method to construct 3D structure from Hi-C matrix which takes dependency of Hi-C data into consideration and addresses the excessive zero issues. However, its computational cost is very expensive.Here we propose tREX-opt, a 3D structure recapitulation method to combine the advantages from both modeling-based and optimization-based approaches. Specifically, we form an objective function based on the tREX model that has greater fidelity to real data. 
+
+In this package, we provide the following main function:
+
+*  **trex_opt**: the flagship function of tREX-opt, which is used to recapitulate 3D structure from single cell Hi-C matrix.
+
+
+We illustrate the usage of these functions in the following section.
+
+## 2 tREX-opt for Single Cell Hi-C data
+
+The following show all the parameters in **trexopt_main** function:
+
+*trex_opt(P.int=NULL,N.int=3,X,max.iter=50,tol=1e-4,method.type='tRex',parallel=FALSE,cpu=4)* 
+
+**P.int** is a N*3 initial coordinate matrix. If not specified, a randomly generated coordinate matrix will be used. The default value is NULL.
+
+**N.int** is the number of the columns of the initial P.int. The default value is 3.
+
+**X** is is the Hi-C matrix. Only the lower triangular values are needed.
+
+**max.iter** is the maximum number of iterations.
+
+**tol** is the relative difference in log likelihood between two adjacent iterations
+
+**method.type** is the method options. method.type should be one of the following: tRex, tPAM, PRAM, PAM.
+
+**parallel** is a logical value enabling the use of parallel function. The default is FALSE. An example on how to use this capability when parallel=TRUE is given later in this Vignette.
+
+**cpu** is the number of CPUs of parallelization when parallelization is turned on.
+
+```{r,results='hide', message=FALSE, warning=FALSE}
+library(trexopt)
+load('sampledata.rda')
+X<-matrix(0,nrow=61,ncol = 61)
+X[lower.tri(X)] <- sample_data
+result<-trex_opt(X,max.iter=100)
+```
+
+
+## 3 References
+
+Park, J. and Lin, S. (2016). Impact of data resolution on three-dimensional structure inference methods. BMC bioinformatics, 17(1), 70.
+
+
